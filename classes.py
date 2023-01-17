@@ -39,9 +39,18 @@ class JdNim:
             ligne = plateau_temp[i[0]]
             ligne[0].pop(i[1])
             plateau_temp[i[0]] = ligne
-            
 
+    def get_number_of_object(self) -> int:
+        """
+        Fonction permettant d'obtenir le nombre d'objet encore présent sur le plateau.
+        """
+        tempnumber = 0
+        for i in self.plateau:
+            tempnumber += len(i[0])
+        return tempnumber
 
+#Zone de test des classes.
 test = JdNim([7,5,3,1])
 test.del_elements([(0,0),(1,0),(0,3)])
 print(test.plateau)
+print(test.get_number_of_object())
