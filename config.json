@@ -1,5 +1,6 @@
 {
     "GlobalConfig":{
-        "Save": false
+        "Save": false,
+        "WindowScale": [600, 500]
     }
 }

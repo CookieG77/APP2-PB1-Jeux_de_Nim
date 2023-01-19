@@ -4,7 +4,16 @@ Fichier principale contenant l'execution du code permettant au lancement du jeux
 """
 
 import json
-from fltk import cree_fenetre, ferme_fenetre, donne_ev, type_ev, touche, image, rectangle, attend_ev, mise_a_jour, hauteur_fenetre, largeur_fenetre
+from fltk import (
+    cree_fenetre,
+    ferme_fenetre,
+    donne_ev,
+    type_ev,
+    touche,
+    image,
+    rectangle,
+    mise_a_jour
+)
 from classes import JdNim
 
 def load_json(filename: str, directory: str = "") -> dict:
@@ -15,7 +24,6 @@ def load_json(filename: str, directory: str = "") -> dict:
         content = json.load(file)
     file.close()
     return content
-
 
 def save_json(directory: str, filename: str, content: any):
     """
@@ -29,25 +37,34 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
     """
     Fonction qui permet l'affichage des objets du jeu.
     """
-    windowscale = (600, 500)
+    # ---Calcule des dimensions des objets---
+    windowscale = gameconfig["GlobalConfig"]["WindowScale"]
     dim_object = jeu.dims
 
-    if (jeu.dims[0] * 200) < (jeu.dims[1]*600): # Si la largeur des objets alignés est inférieur à la hauteur des objets alignés
+    # Si la largeur des objets alignés est inferieur à la hauteur des objets alignés.
+    if (jeu.dims[0] * 200) < (jeu.dims[1]*600):
         new_dim_object = [[200 * (windowscale[0]-100) / (dim_object[0] * 200), 0]]
         new_dim_object[0][1] = ((600*new_dim_object[0][0])/200)
-        new_dim_object.append([0, new_dim_object[0][1] * windowscale[1] / (dim_object[1] * new_dim_object[0][1])])
+        new_dim_object.append(
+            [0,
+            new_dim_object[0][1] * windowscale[1] / (dim_object[1] * new_dim_object[0][1])]
+        )
         new_dim_object[1][0] = (new_dim_object[0][0] * new_dim_object[1][1]) / new_dim_object[0][1]
 
-    else: # Si la hauteur des objets alignés est inférieur à la largeur des objets alignés
+    # Si la hauteur des objets alignés est inférieur à la largeur des objets alignés.
+    else:
         new_dim_object = [[0, 600 * windowscale[1] / (dim_object[1] * 600)]]
         new_dim_object[0][0] = ((200*new_dim_object[0][1])/600)
-        new_dim_object.append([new_dim_object[0][0] * (windowscale[0] - 100) / (dim_object[0] * new_dim_object[0][0]), 0])
+        new_dim_object.append(
+            [new_dim_object[0][0] * (windowscale[0] - 100) / (dim_object[0] * new_dim_object[0][0]),
+            0]
+        )
         new_dim_object[1][1] = (new_dim_object[0][1] * new_dim_object[1][0]) / new_dim_object[0][0]
-    
+
     new_dim_object = [round(new_dim_object[1][0]),
                     round(new_dim_object[1][1])]
 
-    print(new_dim_object)
+    #---Affichage---
     rectangle(500, 0, 600, 500, remplissage = "#AAAAAA", epaisseur = 0)
     for dim_y in range(jeu.dims[1]):
         for dim_x in jeu.plateau[dim_y][0]:
@@ -58,17 +75,16 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
                   hauteur = new_dim_object[1],
                   tag = "object",
                   ancrage = "nw")
-    
-
 
 def launch_game(gameconfig: dict) -> None:
     """
     Fonctions qui lance le jeu tout en prenant en compte si le jeu est sauvegarder.
     """
-    jeu = JdNim([7,5])
+    jeu = JdNim([5])
     if gameconfig["GlobalConfig"]["Save"] is True:
         print("sauvegarde à charger !")
-    cree_fenetre(600, 500)
+    cree_fenetre(gameconfig["GlobalConfig"]["WindowScale"][0],
+                 gameconfig["GlobalConfig"]["WindowScale"][1])
     affiche_objet(jeu, gameconfig)
     CONTINUER = True
     while CONTINUER:
