@@ -50,7 +50,3 @@ class JdNim:
         return tempnumber
 
 #Zone de test des classes.
-test = JdNim([7,5,3,1])
-test.del_elements([(0,0),(1,0),(0,3)])
-print(test.plateau)
-print(test.get_number_of_object())

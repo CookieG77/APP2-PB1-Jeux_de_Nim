@@ -1,6 +1,5 @@
 {
-	"GameConfig": {
-		"GameSaved": False
-   	},
-	"Save" : []
+    "GlobalConfig":{
+        "Save": false
+    }
 }
