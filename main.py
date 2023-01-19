@@ -25,34 +25,51 @@ def save_json(directory: str, filename: str, content: any):
         json.dump(content, file)
     file.close()
 
-def affiche_objet(jeu: JdNim):
+def affiche_objet(jeu: JdNim, gameconfig: dict):
     """
     Fonction qui permet l'affichage des objets du jeu.
     """
-    windowscale = (largeur_fenetre(),hauteur_fenetre())
-    dim_object = [0, len(jeu.plateau)]
-    print(jeu.plateau)
-    for coo_y in range(dim_object[1]):
-            if jeu.plateau[coo_y][1] > dim_object[0]:
-                dim_object[0] = jeu.plateau[coo_y][1]
-    ratio = round(dim_object[0]*200/windowscale[0], 1), round(dim_object[1]*600/windowscale[1], 1)
-    print(ratio)
-    for coo_y in range(dim_object[1]):
-        for coo_x in jeu.plateau[coo_y][0]:
-            image(coo_x*200, coo_y*600,
-                  "textures/Alumette.png",
-                  ancrage = "nw", tag = "obj")
+    windowscale = (600, 500)
+    dim_object = jeu.dims
+
+    if (jeu.dims[0] * 200) < (jeu.dims[1]*600): # Si la largeur des objets alignés est inférieur à la hauteur des objets alignés
+        new_dim_object = [[200 * (windowscale[0]-100) / (dim_object[0] * 200), 0]]
+        new_dim_object[0][1] = ((600*new_dim_object[0][0])/200)
+        new_dim_object.append([0, new_dim_object[0][1] * windowscale[1] / (dim_object[1] * new_dim_object[0][1])])
+        new_dim_object[1][0] = (new_dim_object[0][0] * new_dim_object[1][1]) / new_dim_object[0][1]
+
+    else: # Si la hauteur des objets alignés est inférieur à la largeur des objets alignés
+        new_dim_object = [[0, 600 * windowscale[1] / (dim_object[1] * 600)]]
+        new_dim_object[0][0] = ((200*new_dim_object[0][1])/600)
+        new_dim_object.append([new_dim_object[0][0] * (windowscale[0] - 100) / (dim_object[0] * new_dim_object[0][0]), 0])
+        new_dim_object[1][1] = (new_dim_object[0][1] * new_dim_object[1][0]) / new_dim_object[0][0]
+    
+    new_dim_object = [round(new_dim_object[1][0]),
+                    round(new_dim_object[1][1])]
+
+    print(new_dim_object)
+    rectangle(500, 0, 600, 500, remplissage = "#AAAAAA", epaisseur = 0)
+    for dim_y in range(jeu.dims[1]):
+        for dim_x in jeu.plateau[dim_y][0]:
+            image(new_dim_object[0] * dim_x,
+                  new_dim_object[1] * dim_y,
+                  fichier = "textures/Alumette.png",
+                  largeur = new_dim_object[0],
+                  hauteur = new_dim_object[1],
+                  tag = "object",
+                  ancrage = "nw")
+    
 
 
 def launch_game(gameconfig: dict) -> None:
     """
     Fonctions qui lance le jeu tout en prenant en compte si le jeu est sauvegarder.
     """
-    jeu = JdNim([7,5,3,1])
+    jeu = JdNim([7,5])
     if gameconfig["GlobalConfig"]["Save"] is True:
         print("sauvegarde à charger !")
-    cree_fenetre(500, 500)
-    affiche_objet(jeu)
+    cree_fenetre(600, 500)
+    affiche_objet(jeu, gameconfig)
     CONTINUER = True
     while CONTINUER:
         event = donne_ev()
