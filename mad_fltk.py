@@ -50,7 +50,7 @@ class ButtonRect:
         self.border = border
 
     def draw(self,
-             color_int: str = "",
+             color_int: str,
              color_ext: str = "#000000",
              text: str = "",
              font: str = "Helvetica"
@@ -67,9 +67,7 @@ class ButtonRect:
                          abs(self.coord_a[1] - self.coord_b[1])
                          )
             font_size = get_font_size(text, dimension, font)
-            placement = ((self.coord_a[0] + self.coord_b[0]) // 2,
-                         (self.coord_a[1] + self.coord_b[1]) // 2)
-            texte(placement[0], placement[1],
+            texte(dimension[0] // 2, dimension[1] // 2,
                   text, color_ext, "c", font,
                   font_size
                   )
@@ -87,8 +85,8 @@ class ButtonRect:
         gap_x = dim_overlay[0] // 2
         gap_y = dim_overlay[1] // 2
         coord_x, coord_y = abscisse_souris(), ordonnee_souris()
-        rectangle(coord_x - gap_x, coord_y - dim_overlay[1],
-                  coord_x + gap_x, coord_y,
+        rectangle((coord_x - gap_x, coord_y - dim_overlay),
+                  (coord_x + gap_x, coord_y),
                   color_ext,
                   color_int,
                   tag="overlay"
@@ -96,9 +94,8 @@ class ButtonRect:
         texte(coord_x,
               coord_y - gap_y,
               text,
-              color_ext,
               "c",
-              taille=font_size,
+              taille_texte=font_size,
               tag="overlay"
               )
 
