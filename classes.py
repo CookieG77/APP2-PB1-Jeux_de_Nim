@@ -18,6 +18,10 @@ class JdNim:
             for j in range(i):
                 temp.append(j)
             self.plateau.append([temp, i])
+        self.dims = [0, len(self.plateau)]
+        for coo_y in range(self.dims[1]):
+            if self.plateau[coo_y][1] > self.dims[0]:
+                self.dims[0] = self.plateau[coo_y][1]
 
     def load_save(self,
                   save: list[str, list]
@@ -39,14 +43,9 @@ class JdNim:
             ligne = plateau_temp[i[0]]
             ligne[0].pop(i[1])
             plateau_temp[i[0]] = ligne
+            
 
-    def get_number_of_object(self) -> int:
-        """
-        Fonction permettant d'obtenir le nombre d'objet encore présent sur le plateau.
-        """
-        tempnumber = 0
-        for i in self.plateau:
-            tempnumber += len(i[0])
-        return tempnumber
 
-#Zone de test des classes.
+test = JdNim([7,5,3,1])
+test.del_elements([(0,0),(1,0),(0,3)])
+print(test.plateau)
