@@ -12,7 +12,11 @@ from fltk import (
     touche,
     image,
     rectangle,
-    mise_a_jour
+    mise_a_jour,
+    efface
+)
+from mad_fltk import (
+    ButtonRectTex
 )
 from classes import JdNim
 
@@ -76,6 +80,13 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
                   tag = "object",
                   ancrage = "nw")
 
+# ----------------------
+    button_test = ButtonRectTex((50, 100), (200, 300))
+    button_test.draw('textures/Alumette.png')
+
+    return button_test, None #None pour que le retour soit compté comme liste
+# ----------------------
+
 def launch_game(gameconfig: dict) -> None:
     """
     Fonctions qui lance le jeu tout en prenant en compte si le jeu est sauvegarder.
@@ -85,15 +96,22 @@ def launch_game(gameconfig: dict) -> None:
         print("sauvegarde à charger !")
     cree_fenetre(gameconfig["GlobalConfig"]["WindowScale"][0],
                  gameconfig["GlobalConfig"]["WindowScale"][1])
-    affiche_objet(jeu, gameconfig)
+    list_button = affiche_objet(jeu, gameconfig)
     CONTINUER = True
     while CONTINUER:
+        efface("overlay")
         event = donne_ev()
         if type_ev(event) == "Quitte":
             CONTINUER = False
         elif type_ev(event) == "Touche":
             if touche(event) == "Escape":
                 CONTINUER = False
+# ---------------------------------------
+        elif list_button[0].is_pressed(event):
+            print("oui")
+        if list_button[0].is_hover():
+            list_button[0].overlay()
+# ---------------------------------------
         mise_a_jour()
     ferme_fenetre()
 
