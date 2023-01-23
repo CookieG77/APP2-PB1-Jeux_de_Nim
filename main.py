@@ -147,15 +147,22 @@ def launch_game(gameconfig: dict) -> None:
                     if not lst_choice[0]:
                         end_turn_button_reset = True
                         lst_choice[0].append((i, list_button[i][j][1]))
-                        list_button[i][j][0].overlay()
+                        list_button[i][j][0].overlay(
+                            color = "#EE9999",
+                            tag = str(hex(i))+str(hex(list_button[i][j][1]))
+                            )
                     elif i == lst_choice[0][0][0]:
                         if (i, list_button[i][j][1]) not in lst_choice[0]:
                             lst_choice[0].append((i, list_button[i][j][1]))
+                            list_button[i][j][0].overlay(
+                                color = "#EE4949",
+                                tag = str(hex(i))+str(hex(list_button[i][j][1]))
+                                )
                         else:
                             lst_choice[0].remove((i, list_button[i][j][1]))
+                            efface(str(hex(i))+str(hex(list_button[i][j][1])))
                             if not lst_choice[0]:
                                 end_turn_button_reset = True
-
 
         mise_a_jour()
     ferme_fenetre()
