@@ -10,7 +10,8 @@ from fltk import (
     image,
     abscisse_souris,
     ordonnee_souris,
-    type_ev
+    type_ev,
+    efface
     )
 
 __all__ = [
@@ -86,17 +87,11 @@ class ButtonRect:
                   font_size, self.tag
                   )
 
-    def set_picture(self, path: str):
+    def erase(self):
         """
-        Permet d'afficher le bouton avec une image
+        Fonction permettant la disparition
         """
-        image(self.coord_a[0],
-              self.coord_a[1],
-              path,
-              self.dimension[0],
-              self.dimension[1],
-              "nw"
-              )
+        efface(self.tag)
 
     def overlay(self,
                 text: str,
@@ -192,12 +187,18 @@ class ButtonRectTex:
               self.tag
               )
 
+    def erase(self):
+        """
+        Fonction permettant la disparition
+        """
+        efface(self.tag)
+
     def overlay(self,
                 color: str = "#000000",
                 border: int = 1
                 ):
         """
-        fonction pour afficher un texte en overlay au dessus du bouton
+        Fonction pour afficher un encadrement du bouton
         """
         rectangle(self.coord_a[0], self.coord_a[1],
                   self.coord_b[0], self.coord_b[1],
@@ -278,6 +279,12 @@ class ButtonCircle:
                   font_size, self.tag
                   )
 
+    def erase(self):
+        """
+        Fonction permettant la disparition
+        """
+        efface(self.tag)
+
     def overlay(self,
                 text: str,
                 color_int: str = "",
@@ -334,7 +341,75 @@ class ButtonCircleTex:
     Classe permettant l'apparition
     d'un bouton circulaire avec une image en fond
     """
-    pass
+    def __init__(self,
+                 coord: tuple,
+                 ray: int,
+                 tag: str = None
+                 ):
+        """
+        Initialisation du bouton
+        """
+        self.coord = coord
+        self.ray = ray
+        if tag is None:
+            self.tag = str(hex(coord[0]))[2:] + str(hex(coord[1]))[2:]
+        else:
+            self.tag = tag
+
+    def draw(self,
+             path: str):
+        """
+        Permet d'afficher le bouton avec une image
+        """
+        image(self.coord[0],
+              self.coord[1],
+              path,
+              self.ray * 2,
+              self.ray * 2,
+              "c",
+              self.tag
+              )
+
+    def erase(self):
+        """
+        Fonction permettant la disparition
+        """
+        efface(self.tag)
+
+    def overlay(self,
+                color: str = "#000000",
+                border: int = 1):
+        """
+        Fonction pour afficher un encadrement du bouton
+        """
+        cercle(self.coord[0], self.coord[1],
+               self.ray, color, epaisseur=border,
+               tag="overlay"
+               )
+
+    def is_hover(self):
+        """
+        Fonction détectant le passage de la souris au-dessus
+        """
+        mouse_x = abscisse_souris()
+        mouse_y = ordonnee_souris()
+        distance = ((self.coord[0] - mouse_x) ** 2 +
+                    (self.coord[1] - mouse_y) ** 2) ** 0.5
+        if distance <= self.ray:
+            return True
+        return False
+
+    def is_pressed(self,
+                   event
+                   ):
+        """
+        Fonction détectant un clique effectué sur le bouton
+        """
+        if self.is_hover():
+            if type_ev(event) == 'ClicGauche':
+                return True
+        return False
+
 
 class Text:
     """
@@ -381,6 +456,12 @@ class Text:
               font_size,
               self.tag
               )
+
+    def erase(self):
+        """
+        Fonction permettant la disparition
+        """
+        efface(self.tag)
 
     def modifing_text(self, new_text):
         """
