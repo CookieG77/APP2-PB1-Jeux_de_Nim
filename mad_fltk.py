@@ -308,7 +308,45 @@ class ButtonCircleTex:
     pass
 
 class Text:
-    pass
+    """
+    Classe permettant l'apparition d'un texte
+    """
+    def __init__(self,
+                 coord_a: tuple,
+                 coord_b: tuple,
+                 text: str
+                 ):
+        """
+        Initialisation du texte
+        """
+        self.coord_a = coord_a
+        self.coord_b = coord_b
+        self.text = text
+
+    def draw(self,
+             color: str = "#000000",
+             font: str = "Helvetica",
+             font_size: int = None
+             ):
+        """
+        Fonction permettant l'affichage du texte
+        """
+        coord_x = (self.coord_a[0] + self.coord_b[0]) // 2
+        coord_y = (self.coord_a[1] + self.coord_b[1]) // 2
+        font_size = get_font_size(self.text,
+                                      (abs(self.coord_a[0] - self.coord_b[0]),
+                                       abs(self.coord_a[1] - self.coord_b[1])),
+                                      font
+                                      )
+        texte(coord_x,
+              coord_y,
+              self.text,
+              color,
+              'c',
+              font,
+              font_size
+              )
+
 
 class SliderBar:
     pass
