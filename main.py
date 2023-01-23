@@ -10,13 +10,14 @@ from fltk import (
     donne_ev,
     type_ev,
     touche,
-    image,
     rectangle,
     mise_a_jour,
-    efface
+    efface,
+    efface_tout
 )
 from mad_fltk import (
-    ButtonRectTex
+    ButtonRectTex,
+    ButtonCircle
 )
 from classes import JdNim
 
@@ -69,7 +70,7 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
                     round(new_dim_object[1][1])]
 
     #---Affichage---
-    rectangle(500, 0, 600, 500, remplissage = "#AAAAAA", epaisseur = 0)
+    rectangle(500, 0, 600, 500, remplissage = "#BABABA", epaisseur = 0)
 
     list_button = []
     for dim_y in range(jeu.dims[1]):
@@ -80,7 +81,7 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
                 (new_dim_object[0] * (dim_x + 1), new_dim_object[1] * (dim_y + 1))
                 )
             object_button.draw('textures/Alumette.png')
-            list_temp.append(object_button)
+            list_temp.append((object_button, dim_x))
         list_button.append(list_temp)
 
     return list_button
@@ -91,11 +92,19 @@ def launch_game(gameconfig: dict) -> None:
     """
     jeu = JdNim([5, 6, 25, 5])
     dim_object = jeu.dims
+    lst_choice = [[], "X"]
+
     if gameconfig["GlobalConfig"]["Save"] is True:
         print("sauvegarde à charger !")
     cree_fenetre(gameconfig["GlobalConfig"]["WindowScale"][0],
                  gameconfig["GlobalConfig"]["WindowScale"][1])
     list_button = affiche_objet(jeu, gameconfig)
+    end_turn_button = ButtonCircle(
+        (gameconfig["GlobalConfig"]["WindowScale"][0] - 50,
+         gameconfig["GlobalConfig"]["WindowScale"][1] - 50),
+        40, 5)
+    end_turn_button_reset = False
+    end_turn_button.draw("#AAAAAA", "#888888")
 
     continuer = True
     while continuer:
@@ -106,14 +115,48 @@ def launch_game(gameconfig: dict) -> None:
         elif type_ev(event) == "Touche":
             if touche(event) == "Escape":
                 continuer = False
-# ---------------------------------------
+        elif end_turn_button.is_pressed(event) and lst_choice[0]:
+            end_turn_button_reset = True
+            jeu.del_elements(lst_choice[0])
+            efface_tout()
+            if lst_choice[1] == "X":
+                lst_choice = [[], "O"]
+            else:
+                lst_choice = [[], "X"]
+            list_button = affiche_objet(jeu, gameconfig)
+            
+
+        #Changement Statut bouton de fin de tour.
+        if end_turn_button_reset:
+            end_turn_button_reset = False
+            #Si aucun objet choisit pour le moment.
+            if not lst_choice[0]:
+                end_turn_button.draw(color_ext = "#AAAAAA",
+                                     color_int = "#888888")
+            #Si un ou plusieurs objets choisits.
+            else:
+                end_turn_button.draw(color_ext = "#AAFFAA",
+                                     color_int = "#88FF88")
+
+        #Detection Click sur objet & objet avec overlay
         for i in range(dim_object[1]):
             for j in range(len(list_button[i])):
-                if list_button[i][j].is_hover():
-                    list_button[i][j].overlay()
-                if list_button[i][j].is_pressed(event):
-                    print("oui, " + str(i) + " : " + str(j))
-# ---------------------------------------
+                if list_button[i][j][0].is_hover():
+                    list_button[i][j][0].overlay()
+                if list_button[i][j][0].is_pressed(event):
+                    if not lst_choice[0]:
+                        end_turn_button_reset = True
+                        lst_choice[0].append((i, list_button[i][j][1]))
+                        list_button[i][j][0].overlay()
+                    elif i == lst_choice[0][0][0]:
+                        if (i, list_button[i][j][1]) not in lst_choice[0]:
+                            lst_choice[0].append((i, list_button[i][j][1]))
+                        else:
+                            lst_choice[0].remove((i, list_button[i][j][1]))
+                            if not lst_choice[0]:
+                                end_turn_button_reset = True
+
+
         mise_a_jour()
     ferme_fenetre()
 

@@ -7,7 +7,7 @@ class JdNim:
     Classe permettant d'organiser les données du jeu de Nim.
     """
     def __init__(self,
-                 orga: list     
+                 orga: list
     ) -> None:
         """
         Initialisation de la classe.
@@ -41,5 +41,5 @@ class JdNim:
         plateau_temp = self.plateau[:]
         for i in selection:
             ligne = plateau_temp[i[0]]
-            ligne[0].pop(i[1])
+            ligne[0].remove(i[1])
             plateau_temp[i[0]] = ligne

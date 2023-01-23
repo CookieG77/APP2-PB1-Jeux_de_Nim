@@ -305,6 +305,10 @@ class ButtonCircle:
 
 
 class ButtonCircleTex:
+    """
+    Classe permettant la création d'un
+    bouton de forme circulaire avec du texte
+    """
     pass
 
 class Text:
@@ -349,4 +353,8 @@ class Text:
 
 
 class SliderBar:
+    """
+    Classe permettant la création d'un
+    slider.
+    """
     pass
