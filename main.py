@@ -47,7 +47,7 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
 
     # Si la largeur des objets alignés est inferieur à la hauteur des objets alignés.
     if (jeu.dims[0] * 200) < (jeu.dims[1]*600):
-        new_dim_object = [[200 * (windowscale[0]-100) / (dim_object[0] * 200), 0]]
+        new_dim_object = [[200 * (windowscale[0] - 100) / (dim_object[0] * 200), 0]]
         new_dim_object[0][1] = ((600*new_dim_object[0][0])/200)
         new_dim_object.append(
             [0,
@@ -70,47 +70,49 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
 
     #---Affichage---
     rectangle(500, 0, 600, 500, remplissage = "#AAAAAA", epaisseur = 0)
+
+    list_button = []
     for dim_y in range(jeu.dims[1]):
+        list_temp = []
         for dim_x in jeu.plateau[dim_y][0]:
-            image(new_dim_object[0] * dim_x,
-                  new_dim_object[1] * dim_y,
-                  fichier = "textures/Alumette.png",
-                  largeur = new_dim_object[0],
-                  hauteur = new_dim_object[1],
-                  tag = "object",
-                  ancrage = "nw")
+            object_button = ButtonRectTex(
+                (new_dim_object[0] * dim_x, new_dim_object[1] * dim_y),
+                (new_dim_object[0] * (dim_x + 1), new_dim_object[1] * (dim_y + 1))
+                )
+            object_button.draw('textures/Alumette.png')
+            list_temp.append(object_button)
+        list_button.append(list_temp)
 
-# ----------------------
-    button_test = ButtonRectTex((50, 100), (200, 300))
-    button_test.draw('textures/Alumette.png')
-
-    return button_test, None #None pour que le retour soit compté comme liste
-# ----------------------
+    return list_button
 
 def launch_game(gameconfig: dict) -> None:
     """
     Fonctions qui lance le jeu tout en prenant en compte si le jeu est sauvegarder.
     """
-    jeu = JdNim([5])
+    jeu = JdNim([5, 6, 25, 5])
+    dim_object = jeu.dims
     if gameconfig["GlobalConfig"]["Save"] is True:
         print("sauvegarde à charger !")
     cree_fenetre(gameconfig["GlobalConfig"]["WindowScale"][0],
                  gameconfig["GlobalConfig"]["WindowScale"][1])
     list_button = affiche_objet(jeu, gameconfig)
-    CONTINUER = True
-    while CONTINUER:
+
+    continuer = True
+    while continuer:
         efface("overlay")
         event = donne_ev()
         if type_ev(event) == "Quitte":
-            CONTINUER = False
+            continuer = False
         elif type_ev(event) == "Touche":
             if touche(event) == "Escape":
-                CONTINUER = False
+                continuer = False
 # ---------------------------------------
-        elif list_button[0].is_pressed(event):
-            print("oui")
-        if list_button[0].is_hover():
-            list_button[0].overlay()
+        for i in range(dim_object[1]):
+            for j in range(len(list_button[i])):
+                if list_button[i][j].is_hover():
+                    list_button[i][j].overlay()
+                if list_button[i][j].is_pressed(event):
+                    print("oui, " + str(i) + " : " + str(j))
 # ---------------------------------------
         mise_a_jour()
     ferme_fenetre()

@@ -43,9 +43,3 @@ class JdNim:
             ligne = plateau_temp[i[0]]
             ligne[0].pop(i[1])
             plateau_temp[i[0]] = ligne
-            
-
-
-test = JdNim([7,5,3,1])
-test.del_elements([(0,0),(1,0),(0,3)])
-print(test.plateau)
