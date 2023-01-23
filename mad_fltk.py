@@ -49,7 +49,8 @@ class ButtonRect:
     def __init__(self,
                  coord_a: tuple,
                  coord_b: tuple,
-                 border: int = 1
+                 border: int = 1,
+                 tag: str = None
                  ):
         """
         Initialisation du bouton.
@@ -60,6 +61,10 @@ class ButtonRect:
         self.dimension = (abs(self.coord_a[0] - self.coord_b[0]),
                          abs(self.coord_a[1] - self.coord_b[1])
                          )
+        if tag is None:
+            self.tag = str(hex(coord_a[0]))[2:] + str(hex(coord_a[1]))[2:]
+        else:
+            self.tag = tag
 
     def draw(self,
              color_int: str = "",
@@ -72,13 +77,13 @@ class ButtonRect:
         """
         rectangle(self.coord_a[0], self.coord_a[1],
                   self.coord_b[0], self.coord_b[1],
-                  color_ext, color_int, self.border
-                  )
+                  color_ext, color_int, self.border,
+                  self.tag)
         if text != "":
             font_size = get_font_size(text, self.dimension, font)
             texte(self.dimension[0] // 2, self.dimension[1] // 2,
                   text, color_ext, "c", font,
-                  font_size
+                  font_size, self.tag
                   )
 
     def set_picture(self, path: str):
@@ -157,7 +162,8 @@ class ButtonRectTex:
     def __init__(self,
                  coord_a: tuple,
                  coord_b: tuple,
-                 border: int = 1
+                 border: int = 1,
+                 tag: str = None
                  ):
         """
         Initialisation du bouton.
@@ -168,6 +174,10 @@ class ButtonRectTex:
         self.dimension = (abs(self.coord_a[0] - self.coord_b[0]),
                          abs(self.coord_a[1] - self.coord_b[1])
                          )
+        if tag is None:
+            self.tag = str(hex(coord_a[0]))[2:] + str(hex(coord_a[1]))[2:]
+        else:
+            self.tag = tag
 
     def draw(self, path: str):
         """
@@ -178,7 +188,8 @@ class ButtonRectTex:
               path,
               self.dimension[0],
               self.dimension[1],
-              "nw"
+              "nw",
+              self.tag
               )
 
     def overlay(self,
@@ -230,7 +241,8 @@ class ButtonCircle:
     def __init__(self,
                  coord: tuple,
                  ray: int,
-                 border: int
+                 border: int,
+                 tag: str = None
                  ):
         """
         Initialisation du bouton
@@ -238,6 +250,10 @@ class ButtonCircle:
         self.coord = coord
         self.ray = ray
         self.border = border
+        if tag is None:
+            self.tag = str(hex(coord[0]))[2:] + str(hex(coord[1]))[2:]
+        else:
+            self.tag = tag
 
     def draw(self,
              color_int: str = "",
@@ -250,7 +266,7 @@ class ButtonCircle:
         """
         cercle(self.coord[0], self.coord[1],
                self.ray, color_ext, color_int,
-               self.border
+               self.border, self.tag
                )
         if text != "":
             dimension = (self.ray * 2 + 1,
@@ -259,7 +275,7 @@ class ButtonCircle:
             font_size = get_font_size(text, dimension, font)
             texte(self.coord[0], self.coord[1],
                   text, color_ext, "c", font,
-                  font_size
+                  font_size, self.tag
                   )
 
     def overlay(self,
@@ -327,7 +343,8 @@ class Text:
     def __init__(self,
                  coord_a: tuple,
                  coord_b: tuple,
-                 text: str
+                 text: str,
+                 tag: str = None
                  ):
         """
         Initialisation du texte
@@ -335,6 +352,10 @@ class Text:
         self.coord_a = coord_a
         self.coord_b = coord_b
         self.text = text
+        if tag is None:
+            self.tag = str(hex(coord_a[0]))[2:] + str(hex(coord_a[1]))[2:]
+        else:
+            self.tag = tag
 
     def draw(self,
              color: str = "#000000",
@@ -357,7 +378,8 @@ class Text:
               color,
               'c',
               font,
-              font_size
+              font_size,
+              self.tag
               )
 
     def modifing_text(self, new_text):
