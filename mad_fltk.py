@@ -2,7 +2,16 @@
 Menu ADdon fltk
 """
 
-from fltk import *
+from fltk import (
+    rectangle,
+    cercle,
+    texte,
+    taille_texte,
+    image,
+    abscisse_souris,
+    ordonnee_souris,
+    type_ev
+    )
 
 __all__ = [
     # Classe
@@ -143,7 +152,7 @@ class ButtonRect:
 class ButtonRectTex:
     """
     Classe permettant la création d'un
-    bouton de forme rectangulaire
+    bouton de forme rectangulaire avec une image en fond
     """
     def __init__(self,
                  coord_a: tuple,
@@ -305,6 +314,10 @@ class ButtonCircle:
 
 
 class ButtonCircleTex:
+    """
+    Classe permettant l'apparition
+    d'un bouton circulaire avec une image en fond
+    """
     pass
 
 class Text:
@@ -347,6 +360,15 @@ class Text:
               font_size
               )
 
+    def modifing_text(self, new_text):
+        """
+        Fonction permettant la modification du texte
+        """
+        self.text = new_text
+
 
 class SliderBar:
+    """
+    Classe permettant l'apparition d'une slider bar
+    """
     pass
