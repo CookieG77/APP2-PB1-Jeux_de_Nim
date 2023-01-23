@@ -2,7 +2,17 @@
 Menu ADdon fltk
 """
 
-from fltk import *
+from fltk import (
+    rectangle,
+    cercle,
+    texte,
+    taille_texte,
+    image,
+    abscisse_souris,
+    ordonnee_souris,
+    type_ev,
+    efface
+    )
 
 __all__ = [
     # Classe
@@ -40,7 +50,8 @@ class ButtonRect:
     def __init__(self,
                  coord_a: tuple,
                  coord_b: tuple,
-                 border: int = 1
+                 border: int = 1,
+                 tag: str = None
                  ):
         """
         Initialisation du bouton.
@@ -51,6 +62,10 @@ class ButtonRect:
         self.dimension = (abs(self.coord_a[0] - self.coord_b[0]),
                          abs(self.coord_a[1] - self.coord_b[1])
                          )
+        if tag is None:
+            self.tag = str(hex(coord_a[0]))[2:] + str(hex(coord_a[1]))[2:]
+        else:
+            self.tag = tag
 
     def draw(self,
              color_int: str = "",
@@ -63,26 +78,20 @@ class ButtonRect:
         """
         rectangle(self.coord_a[0], self.coord_a[1],
                   self.coord_b[0], self.coord_b[1],
-                  color_ext, color_int, self.border
-                  )
+                  color_ext, color_int, self.border,
+                  self.tag)
         if text != "":
             font_size = get_font_size(text, self.dimension, font)
             texte(self.dimension[0] // 2, self.dimension[1] // 2,
                   text, color_ext, "c", font,
-                  font_size
+                  font_size, self.tag
                   )
 
-    def set_picture(self, path: str):
+    def erase(self):
         """
-        Permet d'afficher le bouton avec une image
+        Fonction permettant la disparition
         """
-        image(self.coord_a[0],
-              self.coord_a[1],
-              path,
-              self.dimension[0],
-              self.dimension[1],
-              "nw"
-              )
+        efface(self.tag)
 
     def overlay(self,
                 text: str,
@@ -143,12 +152,13 @@ class ButtonRect:
 class ButtonRectTex:
     """
     Classe permettant la création d'un
-    bouton de forme rectangulaire
+    bouton de forme rectangulaire avec une image en fond
     """
     def __init__(self,
                  coord_a: tuple,
                  coord_b: tuple,
-                 border: int = 1
+                 border: int = 1,
+                 tag: str = None
                  ):
         """
         Initialisation du bouton.
@@ -159,6 +169,10 @@ class ButtonRectTex:
         self.dimension = (abs(self.coord_a[0] - self.coord_b[0]),
                          abs(self.coord_a[1] - self.coord_b[1])
                          )
+        if tag is None:
+            self.tag = str(hex(coord_a[0]))[2:] + str(hex(coord_a[1]))[2:]
+        else:
+            self.tag = tag
 
     def draw(self, path: str):
         """
@@ -169,20 +183,30 @@ class ButtonRectTex:
               path,
               self.dimension[0],
               self.dimension[1],
-              "nw"
+              "nw",
+              self.tag
               )
+
+    def erase(self):
+        """
+        Fonction permettant la disparition
+        """
+        efface(self.tag)
 
     def overlay(self,
                 color: str = "#000000",
-                border: int = 1
+                border: int = 1,
+                tag: str = None
                 ):
         """
-        fonction pour afficher un texte en overlay au dessus du bouton
+        Fonction pour afficher un encadrement du bouton
         """
+        if tag is None:
+            tag = "overlay"
         rectangle(self.coord_a[0], self.coord_a[1],
                   self.coord_b[0], self.coord_b[1],
                   color, epaisseur=border,
-                  tag="overlay"
+                  tag=tag
                   )
 
     def is_hover(self):
@@ -221,7 +245,8 @@ class ButtonCircle:
     def __init__(self,
                  coord: tuple,
                  ray: int,
-                 border: int
+                 border: int,
+                 tag: str = None
                  ):
         """
         Initialisation du bouton
@@ -229,6 +254,10 @@ class ButtonCircle:
         self.coord = coord
         self.ray = ray
         self.border = border
+        if tag is None:
+            self.tag = str(hex(coord[0]))[2:] + str(hex(coord[1]))[2:]
+        else:
+            self.tag = tag
 
     def draw(self,
              color_int: str = "",
@@ -241,7 +270,7 @@ class ButtonCircle:
         """
         cercle(self.coord[0], self.coord[1],
                self.ray, color_ext, color_int,
-               self.border
+               self.border, self.tag
                )
         if text != "":
             dimension = (self.ray * 2 + 1,
@@ -250,8 +279,14 @@ class ButtonCircle:
             font_size = get_font_size(text, dimension, font)
             texte(self.coord[0], self.coord[1],
                   text, color_ext, "c", font,
-                  font_size
+                  font_size, self.tag
                   )
+
+    def erase(self):
+        """
+        Fonction permettant la disparition
+        """
+        efface(self.tag)
 
     def overlay(self,
                 text: str,
@@ -306,10 +341,81 @@ class ButtonCircle:
 
 class ButtonCircleTex:
     """
-    Classe permettant la création d'un
-    bouton de forme circulaire avec du texte
+    Classe permettant l'apparition
+    d'un bouton circulaire avec une image en fond
     """
-    pass
+    def __init__(self,
+                 coord: tuple,
+                 ray: int,
+                 tag: str = None
+                 ):
+        """
+        Initialisation du bouton
+        """
+        self.coord = coord
+        self.ray = ray
+        if tag is None:
+            self.tag = str(hex(coord[0]))[2:] + str(hex(coord[1]))[2:]
+        else:
+            self.tag = tag
+
+    def draw(self,
+             path: str):
+        """
+        Permet d'afficher le bouton avec une image
+        """
+        image(self.coord[0],
+              self.coord[1],
+              path,
+              self.ray * 2,
+              self.ray * 2,
+              "c",
+              self.tag
+              )
+
+    def erase(self):
+        """
+        Fonction permettant la disparition
+        """
+        efface(self.tag)
+
+    def overlay(self,
+                color: str = "#000000",
+                border: int = 1,
+                tag: str = None):
+        """
+        Fonction pour afficher un encadrement du bouton
+        """
+        if tag is None:
+            tag = "overlay"
+        cercle(self.coord[0], self.coord[1],
+               self.ray, color, epaisseur=border,
+               tag=tag
+               )
+
+    def is_hover(self):
+        """
+        Fonction détectant le passage de la souris au-dessus
+        """
+        mouse_x = abscisse_souris()
+        mouse_y = ordonnee_souris()
+        distance = ((self.coord[0] - mouse_x) ** 2 +
+                    (self.coord[1] - mouse_y) ** 2) ** 0.5
+        if distance <= self.ray:
+            return True
+        return False
+
+    def is_pressed(self,
+                   event
+                   ):
+        """
+        Fonction détectant un clique effectué sur le bouton
+        """
+        if self.is_hover():
+            if type_ev(event) == 'ClicGauche':
+                return True
+        return False
+
 
 class Text:
     """
@@ -318,7 +424,8 @@ class Text:
     def __init__(self,
                  coord_a: tuple,
                  coord_b: tuple,
-                 text: str
+                 text: str,
+                 tag: str = None
                  ):
         """
         Initialisation du texte
@@ -326,6 +433,10 @@ class Text:
         self.coord_a = coord_a
         self.coord_b = coord_b
         self.text = text
+        if tag is None:
+            self.tag = str(hex(coord_a[0]))[2:] + str(hex(coord_a[1]))[2:]
+        else:
+            self.tag = tag
 
     def draw(self,
              color: str = "#000000",
@@ -348,13 +459,25 @@ class Text:
               color,
               'c',
               font,
-              font_size
+              font_size,
+              self.tag
               )
+
+    def erase(self):
+        """
+        Fonction permettant la disparition
+        """
+        efface(self.tag)
+
+    def modifing_text(self, new_text):
+        """
+        Fonction permettant la modification du texte
+        """
+        self.text = new_text
 
 
 class SliderBar:
     """
-    Classe permettant la création d'un
-    slider.
+    Classe permettant l'apparition d'une slider bar
     """
     pass
