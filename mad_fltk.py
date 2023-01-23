@@ -195,15 +195,18 @@ class ButtonRectTex:
 
     def overlay(self,
                 color: str = "#000000",
-                border: int = 1
+                border: int = 1,
+                tag: str = None
                 ):
         """
         Fonction pour afficher un encadrement du bouton
         """
+        if tag is None:
+            tag = "overlay"
         rectangle(self.coord_a[0], self.coord_a[1],
                   self.coord_b[0], self.coord_b[1],
                   color, epaisseur=border,
-                  tag="overlay"
+                  tag=tag
                   )
 
     def is_hover(self):
@@ -378,13 +381,16 @@ class ButtonCircleTex:
 
     def overlay(self,
                 color: str = "#000000",
-                border: int = 1):
+                border: int = 1,
+                tag: str = None):
         """
         Fonction pour afficher un encadrement du bouton
         """
+        if tag is None:
+            tag = "overlay"
         cercle(self.coord[0], self.coord[1],
                self.ray, color, epaisseur=border,
-               tag="overlay"
+               tag=tag
                )
 
     def is_hover(self):
