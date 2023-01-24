@@ -5,6 +5,7 @@ Menu ADdon fltk
 from fltk import (
     rectangle,
     cercle,
+    ligne,
     texte,
     taille_texte,
     image,
@@ -121,7 +122,7 @@ class ButtonRect:
               )
 
 
-    def is_hover(self):
+    def is_hover(self) -> bool:
         """
         Fonction détectant le passage de la souris au-dessus
         """
@@ -139,7 +140,7 @@ class ButtonRect:
 
     def is_pressed(self,
                    event
-                   ):
+                   ) -> bool:
         """
         Fonction détectant un clique effectué sur le bouton
         """
@@ -209,7 +210,7 @@ class ButtonRectTex:
                   tag=tag
                   )
 
-    def is_hover(self):
+    def is_hover(self) -> bool:
         """
         Fonction détectant le passage de la souris au-dessus
         """
@@ -227,7 +228,7 @@ class ButtonRectTex:
 
     def is_pressed(self,
                    event
-                   ):
+                   ) -> bool:
         """
         Fonction détectant un clique effectué sur le bouton
         """
@@ -315,7 +316,7 @@ class ButtonCircle:
               tag="overlay"
               )
 
-    def is_hover(self):
+    def is_hover(self) -> bool:
         """
         Fonction détectant le passage de la souris au-dessus
         """
@@ -329,7 +330,7 @@ class ButtonCircle:
 
     def is_pressed(self,
                    event
-                   ):
+                   ) -> bool:
         """
         Fonction détectant un clique effectué sur le bouton
         """
@@ -393,7 +394,7 @@ class ButtonCircleTex:
                tag=tag
                )
 
-    def is_hover(self):
+    def is_hover(self) -> bool:
         """
         Fonction détectant le passage de la souris au-dessus
         """
@@ -407,7 +408,7 @@ class ButtonCircleTex:
 
     def is_pressed(self,
                    event
-                   ):
+                   ) -> bool:
         """
         Fonction détectant un clique effectué sur le bouton
         """
@@ -480,4 +481,69 @@ class SliderBar:
     """
     Classe permettant l'apparition d'une slider bar
     """
-    pass
+    def __init__(self,
+                 coord: tuple,
+                 longueur: int,
+                 hauteur: int,
+                 ):
+        """
+        Initialisation du slider.
+        coord --> position ancré à gauche (x,y)
+        """
+        self.max = longueur
+        self.hauteur = (hauteur // 2 * 2) + 1
+        self.advancement = 0
+        self.coord_start = (coord[0], coord[1])
+        self.coord_end = (coord[0] + longueur, coord[1])
+
+    def draw(self,
+             color_point: str = "#AAAAAA",
+             color_line: str = "#888888",
+             color_border: str = "#000000"):
+        """
+        Fonction permettant l'affichage d'un slider.
+        """
+        ligne(self.coord_start[0],self.coord_start[1],
+            self.coord_end[0], self.coord_end[1],
+            couleur = color_line, tag = "slider",
+            epaisseur = self.hauteur)
+        cercle(self.coord_start[0], self.coord_start[1], r = self.hauteur//2,
+            couleur = color_line, remplissage = color_line,
+            tag = "slider")
+        cercle(self.coord_end[0], self.coord_end[1], r = self.hauteur//2,
+            couleur = color_line, remplissage = color_line,
+            tag = "slider")
+        cercle((self.coord_start[0] + self.advancement), (self.coord_start[1]),
+            self.hauteur, couleur = color_border,
+            remplissage = color_point, tag = "slider")
+
+    def is_hover(self) -> bool:
+        """
+        Permet de détecter si la souris survolle le slider.
+        """
+        coord_x = abscisse_souris()
+        coord_y = ordonnee_souris()
+        verif_x = (self.coord_start[0] <= coord_x <= self.coord_end[0])
+        minimum, maximum = self.coord_start[1] - self.hauteur, self.coord_end[1] + self.hauteur
+        verif_y = ( minimum <= coord_y <= maximum)
+        if verif_x and verif_y:
+            return True
+        return False
+
+    def is_pressed(self, event) -> bool:
+        """
+        Permet de détecter si le slider est cliqué et actualise sa valeur au clique.
+        Event correspond à l'event fltk en cour.
+        """
+        if self.is_hover():
+            if type_ev(event) == 'ClicGauche':
+                self.advancement = abscisse_souris() - self.coord_start[0]
+                return True
+        return False
+
+    def get_value(self,
+                  new_total: int = 100) -> int:
+        """
+        Permet de passer la valeur du slider à une valeur entre 0 et 'new_total'.
+        """
+        return self.advancement/self.max*new_total
