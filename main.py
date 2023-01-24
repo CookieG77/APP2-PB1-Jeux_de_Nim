@@ -17,7 +17,8 @@ from fltk import (
 )
 from mad_fltk import (
     ButtonRectTex,
-    ButtonCircle
+    ButtonCircle,
+    Text
 )
 from classes import JdNim
 
@@ -90,7 +91,7 @@ def launch_game(gameconfig: dict) -> None:
     """
     Fonctions qui lance le jeu tout en prenant en compte si le jeu est sauvegarder.
     """
-    jeu = JdNim([5, 6, 25, 5])
+    jeu = JdNim([7, 5, 3])
     dim_object = jeu.dims
     lst_choice = [[], "X"]
 
@@ -105,6 +106,12 @@ def launch_game(gameconfig: dict) -> None:
         40, 5)
     end_turn_button_reset = False
     end_turn_button.draw("#AAAAAA", "#888888")
+    joueurs = Text(
+        (gameconfig["GlobalConfig"]["WindowScale"][0] - 10, 10),
+        (gameconfig["GlobalConfig"]["WindowScale"][0] - 90, 90),
+        "J.1"
+    )
+    joueurs.draw()
 
     continuer = True
     while continuer:
@@ -119,11 +126,32 @@ def launch_game(gameconfig: dict) -> None:
             end_turn_button_reset = True
             jeu.del_elements(lst_choice[0])
             efface_tout()
+            if gameconfig["GlobalConfig"]["Misery-Mode"]:
+                if jeu.check_victory(misery = True):
+                    break
+            else:
+                if jeu.check_victory():
+                    break
+            else:
+                list_button = affiche_objet(jeu, gameconfig)
             if lst_choice[1] == "X":
                 lst_choice = [[], "O"]
+                joueurs = Text(
+                    (gameconfig["GlobalConfig"]["WindowScale"][0] - 10, 10),
+                    (gameconfig["GlobalConfig"]["WindowScale"][0] - 90, 90),
+                    "J.2"
+                )
             else:
                 lst_choice = [[], "X"]
-            list_button = affiche_objet(jeu, gameconfig)
+                joueurs = Text(
+                    (gameconfig["GlobalConfig"]["WindowScale"][0] - 10, 10),
+                    (gameconfig["GlobalConfig"]["WindowScale"][0] - 90, 90),
+                    "J.1"
+                )
+            joueurs.draw()
+            print(jeu.check_victory(misery=True))
+            
+            
             
 
         #Changement Statut bouton de fin de tour.
@@ -166,6 +194,10 @@ def launch_game(gameconfig: dict) -> None:
 
         mise_a_jour()
     ferme_fenetre()
+    if lst_choice[1] == "X" and not gameconfig["GlobalConfig"]["Misery-Mode"]:
+        print("victoire de l'équipe 1.")
+    else:
+        print("victoire de l'équipe 2.")
 
 configjson = load_json("config.json")
 launch_game(configjson)

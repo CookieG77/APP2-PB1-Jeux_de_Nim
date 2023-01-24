@@ -1,6 +1,7 @@
 {
     "GlobalConfig":{
         "Save": false,
-        "WindowScale": [600, 500]
+        "WindowScale": [600, 500],
+        "Misery-Mode": false 
     }
 }
