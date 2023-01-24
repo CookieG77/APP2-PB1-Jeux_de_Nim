@@ -129,11 +129,13 @@ def launch_game(gameconfig: dict) -> None:
             if gameconfig["GlobalConfig"]["Misery-Mode"]:
                 if jeu.check_victory(misery = True):
                     break
-            else:
+                else:
+                    list_button = affiche_objet(jeu, gameconfig)
+            elif not gameconfig["GlobalConfig"]["Misery-Mode"]:
                 if jeu.check_victory():
                     break
-            else:
-                list_button = affiche_objet(jeu, gameconfig)
+                else:
+                    list_button = affiche_objet(jeu, gameconfig)
             if lst_choice[1] == "X":
                 lst_choice = [[], "O"]
                 joueurs = Text(
@@ -149,9 +151,6 @@ def launch_game(gameconfig: dict) -> None:
                     "J.1"
                 )
             joueurs.draw()
-            print(jeu.check_victory(misery=True))
-            
-            
             
 
         #Changement Statut bouton de fin de tour.
