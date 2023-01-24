@@ -130,8 +130,19 @@ def launch_game(origin_gameconfig: dict) -> None:
             gameconfig["GlobalConfig"]["WindowScale"] = [largeur_fenetre(),
                                                          hauteur_fenetre()]
             efface_tout()
+            
             list_button = affiche_objet(jeu, gameconfig)
+            joueurs = Text(
+                (gameconfig["GlobalConfig"]["WindowScale"][0] - 10, 10),
+                (gameconfig["GlobalConfig"]["WindowScale"][0] - 90, 90),
+                "J.1"
+            )
             joueurs.draw()
+            end_turn_button = ButtonCircle(
+                (gameconfig["GlobalConfig"]["WindowScale"][0] - 50,
+                gameconfig["GlobalConfig"]["WindowScale"][1] - 50),
+                40, 5
+            )
             #Si aucun objet choisit pour le moment.
             if not lst_choice[0]:
                 end_turn_button.draw(color_ext = "#AAAAAA",
