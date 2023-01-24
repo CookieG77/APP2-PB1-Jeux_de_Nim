@@ -12,6 +12,8 @@ from fltk import (
     touche,
     rectangle,
     mise_a_jour,
+    largeur_fenetre,
+    hauteur_fenetre,
     efface,
     efface_tout
 )
@@ -71,7 +73,7 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
                     round(new_dim_object[1][1])]
 
     #---Affichage---
-    rectangle(500, 0, 600, 500, remplissage = "#BABABA", epaisseur = 0)
+    rectangle(windowscale[0] - 100, 0, windowscale[0], windowscale[1], remplissage = "#BABABA", epaisseur = 0)
 
     list_button = []
     for dim_y in range(jeu.dims[1]):
@@ -87,18 +89,20 @@ def affiche_objet(jeu: JdNim, gameconfig: dict):
 
     return list_button
 
-def launch_game(gameconfig: dict) -> None:
+def launch_game(origin_gameconfig: dict) -> None:
     """
     Fonctions qui lance le jeu tout en prenant en compte si le jeu est sauvegarder.
     """
-    jeu = JdNim([7, 5, 3])
+    gameconfig = origin_gameconfig.copy()
+    jeu = JdNim([50, 40, 30, 20, 10])
     dim_object = jeu.dims
     lst_choice = [[], "X"]
 
     if gameconfig["GlobalConfig"]["Save"] is True:
         print("sauvegarde à charger !")
     cree_fenetre(gameconfig["GlobalConfig"]["WindowScale"][0],
-                 gameconfig["GlobalConfig"]["WindowScale"][1])
+                 gameconfig["GlobalConfig"]["WindowScale"][1],
+                 redimension=True)
     list_button = affiche_objet(jeu, gameconfig)
     end_turn_button = ButtonCircle(
         (gameconfig["GlobalConfig"]["WindowScale"][0] - 50,
@@ -122,6 +126,20 @@ def launch_game(gameconfig: dict) -> None:
         elif type_ev(event) == "Touche":
             if touche(event) == "Escape":
                 continuer = False
+        elif type_ev(event) == "Redimension":
+            gameconfig["GlobalConfig"]["WindowScale"] = [largeur_fenetre(),
+                                                         hauteur_fenetre()]
+            efface_tout()
+            list_button = affiche_objet(jeu, gameconfig)
+            joueurs.draw()
+            #Si aucun objet choisit pour le moment.
+            if not lst_choice[0]:
+                end_turn_button.draw(color_ext = "#AAAAAA",
+                                     color_int = "#888888")
+            #Si un ou plusieurs objets choisits.
+            else:
+                end_turn_button.draw(color_ext = "#AAFFAA",
+                                     color_int = "#88FF88")
         elif end_turn_button.is_pressed(event) and lst_choice[0]:
             end_turn_button_reset = True
             jeu.del_elements(lst_choice[0])
