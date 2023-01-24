@@ -128,11 +128,13 @@ def launch_game(gameconfig: dict) -> None:
             efface_tout()
             if gameconfig["GlobalConfig"]["Misery-Mode"]:
                 if jeu.check_victory(misery = True):
+                    continuer = False
                     break
                 else:
                     list_button = affiche_objet(jeu, gameconfig)
             elif not gameconfig["GlobalConfig"]["Misery-Mode"]:
                 if jeu.check_victory():
+                    continuer = False
                     break
                 else:
                     list_button = affiche_objet(jeu, gameconfig)
@@ -193,10 +195,11 @@ def launch_game(gameconfig: dict) -> None:
 
         mise_a_jour()
     ferme_fenetre()
-    if lst_choice[1] == "X" and not gameconfig["GlobalConfig"]["Misery-Mode"]:
-        print("victoire de l'équipe 1.")
-    else:
-        print("victoire de l'équipe 2.")
+    if not continuer:
+        if lst_choice[1] == "X" and not gameconfig["GlobalConfig"]["Misery-Mode"]:
+            print("victoire de l'équipe 1.")
+        else:
+            print("victoire de l'équipe 2.")
 
 configjson = load_json("config.json")
 launch_game(configjson)
